@@ -1,0 +1,2 @@
+# CustomCapability
+UWP HSA example
