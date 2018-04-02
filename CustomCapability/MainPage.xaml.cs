@@ -22,9 +22,20 @@ namespace CustomCapability
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private RpcClientUWP.RpcClient1 m_rpcClient;
         public MainPage()
         {
             this.InitializeComponent();
+        }
+
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(m_rpcClient == null)
+            {
+                m_rpcClient = new RpcClientUWP.RpcClient1();
+                var result = await m_rpcClient.Start();
+
+            }
         }
     }
 }

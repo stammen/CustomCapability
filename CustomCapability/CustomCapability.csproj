@@ -104,6 +104,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="CustomCapability.SCCD">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="CustomCapability_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +134,12 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.6</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RpcClientUWP\RpcClientUWP.vcxproj">
+      <Project>{76feae5b-3525-4ae4-b8de-5a7a3eed0ec5}</Project>
+      <Name>RpcClientUWP</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

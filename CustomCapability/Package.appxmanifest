@@ -4,7 +4,8 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  IgnorableNamespaces="uap mp uap4">
 
   <Identity
     Name="6de54659-af89-4511-a461-f9182e669e72"
@@ -45,5 +46,6 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap4:CustomCapability Name="microsoft.hsaTestCustomCapability_q536wpkpf5cy2" />
   </Capabilities>
 </Package>
