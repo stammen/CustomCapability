@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,11 +32,17 @@ namespace CustomCapability
             this.InitializeComponent();
         }
 
+        private void OnAudioInputHandler(IBuffer buffer)
+        {
+            Debug.WriteLine("OnAudioInputHandler: " + buffer.Length);
+        }
+
         private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             if(m_rpcClient == null)
             {
                 m_rpcClient = new RpcClientUWP.RpcClient1();
+                m_rpcClient.OnAudioInput += OnAudioInputHandler;
                 var result = await m_rpcClient.Open();
                 if(result)
                 {

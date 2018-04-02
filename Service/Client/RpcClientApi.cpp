@@ -65,7 +65,7 @@ error:
 }
 
 // Starts metering service and blocks till metering is stopped
-__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioDataCallback callback) {
+__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioDataCallback callback, void* context) {
     RpcClient* client;
     if (RpcClientHandle == NULL) {
         return ERROR_INVALID_PARAMETER;
@@ -76,7 +76,7 @@ __int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioData
         return ERROR_INVALID_HANDLE;
     }
 
-    return client->StartMeteringAndWaitForStop();
+    return client->StartMeteringAndWaitForStop(callback, context);
 }
 
 // Sends stop metering to RPC Service

@@ -82,11 +82,12 @@ error_status :
 // Make RPC call to start metering. This is a blocking call and 
 // will return only after StopMetering is called.
 //
-__int64 RpcClient::StartMeteringAndWaitForStop()
+__int64 RpcClient::StartMeteringAndWaitForStop(AudioDataCallback callback, void* context)
 {
     __int64 ulCode = 0;
     CallbackCount = 0;
-
+	m_audioCallback = callback;
+	m_audioCallbackContext = context;
     RpcTryExcept
     {
         ::StartMetering(phContext, (__int64)this);
@@ -129,11 +130,17 @@ RpcClient::~RpcClient()
     if (hRpcBinding != NULL)
     {
 		::RemoteClose(&phContext);
-
-
         status = RpcBindingFree(&hRpcBinding);
         hRpcBinding = NULL;
     }
+}
+
+void RpcClient::DoAudioCallback(unsigned long length, byte* data)
+{
+	if (m_audioCallback != nullptr)
+	{
+		m_audioCallback(length, data, m_audioCallbackContext);
+	}
 }
 
 //
@@ -143,6 +150,7 @@ void MeteringDataEvent(unsigned long length, byte* data, __int64 context)
 {
     RpcClient* client = static_cast<RpcClient*>((PVOID)context);
     ++client->CallbackCount;
+	client->DoAudioCallback(length, data);
 }
 
 ///******************************************************/

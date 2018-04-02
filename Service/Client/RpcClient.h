@@ -13,6 +13,7 @@
 #define RPC_STATIC_ENDPOINT L"HsaSampleRpcEndpoint"
 
 #include "RpcInterface_h.h"
+#include "RpcClientApi.h"
 
 
 /// <summary>
@@ -21,12 +22,15 @@
 class RpcClient sealed
 {
 public:
-    ~RpcClient();
-    __int64 Initialize();
-    __int64 StartMeteringAndWaitForStop();
-    __int64 StopMetering();
-    int CallbackCount;
+	~RpcClient();
+	__int64 Initialize();
+    __int64 StartMeteringAndWaitForStop(AudioDataCallback callback, void* context);
+	__int64 StopMetering();
+	void DoAudioCallback(unsigned long length, byte* data);
+	int CallbackCount;
 private:
+	AudioDataCallback m_audioCallback;
+	void* m_audioCallbackContext;
     handle_t hRpcBinding;
     PCONTEXT_HANDLE_TYPE phContext;
 };

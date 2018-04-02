@@ -17,7 +17,7 @@
 //
 extern "C" {
 typedef void * RPC_CLIENT_HANDLE;
-typedef void(*AudioDataCallback) (const unsigned int length, unsigned char* data, __int64 context);
+typedef void(*AudioDataCallback) (const unsigned int length, unsigned char* data, void* context);
 
 // Opens metering RPC endpoint
 __declspec(dllexport)
@@ -25,7 +25,7 @@ __int64 RpcClientInitialize(RPC_CLIENT_HANDLE* RpcClientHandle);
 
 // Starts metering service and blocks till metering is stopped
 __declspec(dllexport)
-__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioDataCallback callback);
+__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioDataCallback callback, void* context);
 
 // Sends stop metering to RPC Service
 __declspec(dllexport)
