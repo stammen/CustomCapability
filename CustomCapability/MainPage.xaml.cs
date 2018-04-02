@@ -23,17 +23,55 @@ namespace CustomCapability
     public sealed partial class MainPage : Page
     {
         private RpcClientUWP.RpcClient1 m_rpcClient;
+        private bool m_rpcRunning;
+
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             if(m_rpcClient == null)
             {
                 m_rpcClient = new RpcClientUWP.RpcClient1();
-                var result = await m_rpcClient.Start();
+                var result = await m_rpcClient.Open();
+                if(result)
+                {
+                    openButton.Content = "Close";
+                    startButton.IsEnabled = true;
+                    m_rpcRunning = false;
+
+                }
+                else
+                {
+                    m_rpcClient = null;
+                }
+            }
+            else
+            {
+                var result = await m_rpcClient.Close();
+                openButton.Content = "Open";
+                startButton.IsEnabled = false;
+
+                m_rpcClient = null;
+            }
+        }
+
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_rpcRunning)
+            {
+                var result = await m_rpcClient.Stop();
+                m_rpcRunning = false;
+                startButton.Content = "Start";
+
+            }
+            else
+            {
+                m_rpcClient.Start();
+                m_rpcRunning = true;
+                startButton.Content = "Stop";
 
             }
         }

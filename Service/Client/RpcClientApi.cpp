@@ -65,7 +65,7 @@ error:
 }
 
 // Starts metering service and blocks till metering is stopped
-__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, __int64 samplePeriod) {
+__int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, AudioDataCallback callback) {
     RpcClient* client;
     if (RpcClientHandle == NULL) {
         return ERROR_INVALID_PARAMETER;
@@ -76,7 +76,7 @@ __int64 StartMeteringAndWaitForStop(RPC_CLIENT_HANDLE RpcClientHandle, __int64 s
         return ERROR_INVALID_HANDLE;
     }
 
-    return client->StartMeteringAndWaitForStop(samplePeriod);
+    return client->StartMeteringAndWaitForStop();
 }
 
 // Sends stop metering to RPC Service
@@ -94,35 +94,6 @@ __int64 StopMeteringData(RPC_CLIENT_HANDLE RpcClientHandle) {
     return client->StopMetering();
 }
 
-// Updates sample rate of metering RPC Service
-__int64 SetSampleRate(RPC_CLIENT_HANDLE RpcClientHandle, int rate) {
-    RpcClient* client;
-    if (RpcClientHandle == NULL) {
-        return ERROR_INVALID_PARAMETER;
-    }
-
-    client = RetriveRpcClientFromHandle(RpcClientHandle);
-    if (client == NULL) {
-        return ERROR_INVALID_HANDLE;
-    }
-
-    return client->SetSampleRate(rate);
-}
-
-// Get the most recent metering data received from the metering RPC service
-__int64 GetMeteringData(RPC_CLIENT_HANDLE RpcClientHandle, unsigned char** MeteringData) {
-    RpcClient* client;
-    if (RpcClientHandle == NULL || MeteringData == NULL) {
-        return ERROR_INVALID_PARAMETER;
-    }
-
-    client = RetriveRpcClientFromHandle(RpcClientHandle);
-    if (client == NULL) {
-        return ERROR_INVALID_HANDLE;
-    }
-    *MeteringData = client->MeteringData;
-    return ERROR_SUCCESS;
-}
 
 // Closes metering RPC endpoint
 __int64 RpcClientClose(RPC_CLIENT_HANDLE RpcClientHandle) {

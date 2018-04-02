@@ -22,6 +22,7 @@
 #include <SDKDDKVer.h>
 
 #include <windows.h>
+#include <windows.h>
 #include <Rpc.h>
 #include <rpcdce.h>
 
@@ -81,34 +82,14 @@ error_status :
 // Make RPC call to start metering. This is a blocking call and 
 // will return only after StopMetering is called.
 //
-__int64 RpcClient::StartMeteringAndWaitForStop(__int64 samplePeriod)
+__int64 RpcClient::StartMeteringAndWaitForStop()
 {
     __int64 ulCode = 0;
     CallbackCount = 0;
-    MeteringData = 0;
 
     RpcTryExcept
     {
-        ::StartMetering(phContext, samplePeriod, (__int64)this);
-    }
-    RpcExcept(1)
-    {
-        ulCode = RpcExceptionCode();
-    }
-    RpcEndExcept
-
-    return ulCode;
-}
-
-//
-// Make rpc call SetSampleRate
-//
-__int64 RpcClient::SetSampleRate(int rate)
-{
-    __int64 ulCode = 0;
-    RpcTryExcept
-    {
-        ::SetSamplePeriod(phContext, rate);
+        ::StartMetering(phContext, (__int64)this);
     }
     RpcExcept(1)
     {
@@ -161,7 +142,6 @@ RpcClient::~RpcClient()
 void MeteringDataEvent(unsigned long length, byte* data, __int64 context)
 {
     RpcClient* client = static_cast<RpcClient*>((PVOID)context);
-    client->MeteringData = data;
     ++client->CallbackCount;
 }
 

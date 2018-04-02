@@ -12,44 +12,19 @@
 #include "stdafx.h"
 #include "Metering.h"
 #include <assert.h>  
+#include <iostream>
+
 #include "RpcInterface_h.h" 
 
 using namespace RpcServer;
 
-static char* sHello = "hello";
-
-//
-// Thread pool callback method for metering worker
-//
-void CALLBACK MeteringWorkerTpCallback(
-    _In_ PTP_CALLBACK_INSTANCE /*iTimerInstance*/,
-    _In_ PVOID pContext,
-    _In_ PTP_TIMER /*pTimer*/)
-{
-    Metering *metering = static_cast<Metering *>(pContext);
-
-    if (metering != nullptr)
-    {
-        // Run the metering worker for this instance of metering
-        metering->MeteringWorker();
-    }
-}
 
 //
 // ctor for Metering
 //
-Metering::Metering(
-    _In_ __int64 period)
+Metering::Metering()
 {
-    tpTimer = CreateThreadpoolTimer(::MeteringWorkerTpCallback, this, nullptr);
-    // TODO: Handle if CreateThreadpoolTimer fails i.e tpTimer == nullptr
-
-    samplePeriod = period;
-    event = CreateEvent(
-        nullptr,  // default security attributes
-        FALSE,    // auto-reset event object
-        FALSE,    // initial state is nonsignaled
-        nullptr); // unnamed object
+ 
 }
 
 //
@@ -57,96 +32,63 @@ Metering::Metering(
 //
 Metering::~Metering()
 {
-    if (tpTimer != nullptr)
-    {
-        // How to close threadpool timer when there are outstanding callbacks:
-        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms682040(v=vs.85).aspx
-        SetThreadpoolTimer(tpTimer, nullptr, 0, 0);
-        WaitForThreadpoolTimerCallbacks(tpTimer, true);
-        CloseThreadpoolTimer(tpTimer);
-        tpTimer = nullptr;
-    }
-    CloseHandle(event);
+  
 }
 
-//
-// Set the lowest sample period
-//
-void Metering::SetSamplePeriod(_In_ __int64 period)
-{
-    if (period < 1)
-    {
-        // Don't allow 0 (too fast) or negative numbers.
-        period = 1;
-    }
-    if (period > 1000)
-    {
-        // Don't let the period be too long, or we will be
-        // slow to shut down.
-        period = 1000;
-    }
-    samplePeriod = period;
-}
-
-//
-// Get last known metering data
-//
-__int64 Metering::GetMeteringData()
-{
-	return _data++;
-}
-
-//
-// Metering worker that updates metering data
-//
-void Metering::MeteringWorker()
-{
-    // Get the value from the imaginary driver and update the data
-    _data = GetTickCount();
-    SetEvent(event);
-}
-
-//
-// Set the thread poot timer and wait for metering data.
-//
-void Metering::WaitForMeteringData() const
-{
-    ULARGE_INTEGER ulDueTime;
-    FILETIME FileDueTime;
-    ulDueTime.QuadPart = static_cast<ULONGLONG>(-(1 * 10 * 1000 * samplePeriod));
-    FileDueTime.dwHighDateTime = ulDueTime.HighPart;
-    FileDueTime.dwLowDateTime = ulDueTime.LowPart;
-
-    SetThreadpoolTimer(tpTimer,
-                       &FileDueTime,
-                       0,
-                       0);
-
-    WaitForSingleObject(event, INFINITE);
-}
+static char* sHello = "hello";
 
 void Metering::StartMetering(
-    _In_ __int64 samplePeriod,
     _In_ __int64 context)
 {
-    stopMeteringRequested = false;
-    SetSamplePeriod(samplePeriod);
+	std::cout << "Metering::StartMetering" << std::endl;
 
-	_data = 0;
-    while (true)
-    {
-        //WaitForMeteringData();
+    stopMeteringRequested = false;
+	m_context = context;
+	
+	if (m_audioInput)
+	{
+		StopMetering();
+	}
+
+	m_audioInput = std::make_unique<AudioInput>(this);
+	m_audioInput->Start();
+	while (true)
+	{
 		Sleep(1);
-        if (stopMeteringRequested || ShutdownRequested)
-        {
-            break;
-        }
-        MeteringDataEvent(strlen(sHello), (byte*)sHello, context);
-    }
+		if (stopMeteringRequested || ShutdownRequested)
+		{
+			break;
+		}
+		std::shared_ptr<std::vector<unsigned char>> data;
+		if (m_sampleQueue.try_pop(data))
+		{
+			MeteringDataEvent(data->size(), data->data(), m_context);
+		}
+	}
 }
 
 void Metering::StopMetering()
 {
-    stopMeteringRequested = true;
+	std::cout << "Metering::StopMetering" << std::endl;
+
+	stopMeteringRequested = true;
+	if (m_audioInput)
+	{
+		m_audioInput->Stop();
+		m_audioInput.reset();
+	}
 }
+
+
+void Metering::OnAudioInput(std::shared_ptr<std::vector<unsigned char>> data)
+{
+	std::cout << "Metering::OnAudioInput:" << data->size() << std::endl;
+
+	if (!stopMeteringRequested && !ShutdownRequested)
+	{
+		m_sampleQueue.push(data);
+		//MeteringDataEvent(data->size(), data->data(), m_context);
+	}
+}
+
 

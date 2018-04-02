@@ -23,11 +23,9 @@ class RpcClient sealed
 public:
     ~RpcClient();
     __int64 Initialize();
-    __int64 StartMeteringAndWaitForStop(__int64 samplePeriod);
+    __int64 StartMeteringAndWaitForStop();
     __int64 StopMetering();
-    __int64 SetSampleRate(int rate);
     int CallbackCount;
-    unsigned char* MeteringData;
 private:
     handle_t hRpcBinding;
     PCONTEXT_HANDLE_TYPE phContext;

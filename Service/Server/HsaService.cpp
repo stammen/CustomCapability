@@ -57,6 +57,7 @@
 //  COMMENTS:
 //    wmain() either performs the command line task, or run the service.
 //
+[Platform::MTAThread]
 int wmain(_In_ int argc, _In_ wchar_t *argv[])
 {
     bool invalidArgs = false;

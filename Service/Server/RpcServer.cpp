@@ -260,7 +260,7 @@ void RemoteOpen(
     std::cout << "opening rpc endpoint" << std::endl;
     *pphContext = static_cast<PCONTEXT_HANDLE_TYPE *>(midl_user_allocate(sizeof(METERING_CONTEXT)));
     METERING_CONTEXT* meteringContext = static_cast<METERING_CONTEXT *>(*pphContext);
-    meteringContext->metering = new Metering(DEFAULT_METERING_PERIOD);
+    meteringContext->metering = new Metering();
 }
 
 //
@@ -300,23 +300,12 @@ void __RPC_USER PCONTEXT_HANDLE_TYPE_rundown(
 
 void StartMetering(
     _In_ PCONTEXT_HANDLE_TYPE phContext,
-    _In_ __int64 period,
     _In_ __int64 context)
 {
     std::cout << "start metering" << std::endl;
     METERING_CONTEXT* meteringContext = static_cast<METERING_CONTEXT *>(phContext);
-    meteringContext->metering->StartMetering(period, context);
-    std::cout << "done metering" << std::endl;
+    meteringContext->metering->StartMetering(context);
 }
-
-void SetSamplePeriod(
-    _In_ PCONTEXT_HANDLE_TYPE phContext,
-    _In_ __int64 period)
-{
-    METERING_CONTEXT* meteringContext = static_cast<METERING_CONTEXT *>(phContext);
-    meteringContext->metering->SetSamplePeriod(period);
-}
-
 
 void StopMetering(_In_ PCONTEXT_HANDLE_TYPE phContext)
 {

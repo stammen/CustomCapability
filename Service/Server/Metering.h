@@ -1,29 +1,29 @@
 #include "stdafx.h"
+#include "AudioInput.h"
+
 #include <windows.h>
+#include <concurrent_queue.h>
 
 #include <iostream>       // std::cout
 #include <thread>         // std::thread
 #include <mutex> 
+#include <memory> 
 
 namespace RpcServer
 {
-    class Metering
+    class Metering : public IAudioInputListener
     {
     public:
-        Metering(__int64 period);
-        void SetSamplePeriod(__int64 period);
-        __int64 GetMeteringData();
-        void MeteringWorker();
-        void WaitForMeteringData() const;
-        void StartMetering(__int64 samplePeriod, __int64 context);
+        Metering();
+        void StartMetering( __int64 context);
         void StopMetering();
         ~Metering();
+		virtual void OnAudioInput(std::shared_ptr<std::vector<unsigned char>> data);
 
     private:
-		__int64 _data;
-        volatile __int64 samplePeriod;
-        PTP_TIMER tpTimer = nullptr;
-        HANDLE event;
+		__int64 m_context;
+		std::unique_ptr<AudioInput> m_audioInput;
         volatile bool stopMeteringRequested = false;
+		Concurrency::concurrent_queue < std::shared_ptr<std::vector<unsigned char>>> m_sampleQueue;
     };
 }

@@ -36,17 +36,12 @@ interface RpcInterface
     //
     void StartMetering(
         [in] PCONTEXT_HANDLE_TYPE phContext,
-        [in] __int64 samplePeriod,
         [in, optional] __int64 context);
-
-    void SetSamplePeriod(
-        [in] PCONTEXT_HANDLE_TYPE phContext,
-        [in] __int64 samplePeriod);
 
     void StopMetering([in] PCONTEXT_HANDLE_TYPE phContext);
 
     [callback] void MeteringDataEvent(
 		[in] unsigned long lArraySize,
-		[size_is(lArraySize)] byte date[*],
+		[size_is(lArraySize)] byte data[*],
 		[in, optional] __int64 context);
 }
