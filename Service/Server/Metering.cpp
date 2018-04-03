@@ -35,8 +35,6 @@ Metering::~Metering()
   
 }
 
-static char* sHello = "hello";
-
 void Metering::StartMetering(
     _In_ __int64 context)
 {
@@ -83,11 +81,9 @@ void Metering::StopMetering()
 void Metering::OnAudioInput(std::shared_ptr<std::vector<unsigned char>> data)
 {
 	//std::cout << "Metering::OnAudioInput:" << data->size() << std::endl;
-
 	if (!stopMeteringRequested && !ShutdownRequested)
 	{
 		m_sampleQueue.push(data);
-		//MeteringDataEvent(data->size(), data->data(), m_context);
 	}
 }
 
