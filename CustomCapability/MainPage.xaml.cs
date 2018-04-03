@@ -78,6 +78,7 @@ namespace CustomCapability
                 var result = await m_rpcClient.Stop();
                 m_rpcRunning = false;
                 startButton.Content = "Start";
+                openButton.IsEnabled = true;
                 m_audioOutput.Stop();
                 m_audioOutput = null;
             }
@@ -88,6 +89,7 @@ namespace CustomCapability
                 m_rpcClient.Start();
                 m_rpcRunning = true;
                 startButton.Content = "Stop";
+                openButton.IsEnabled = false;
             }
         }
     }
