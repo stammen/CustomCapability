@@ -26,20 +26,22 @@ namespace CustomCapability
     {
         private RpcClientUWP.RpcClient1 m_rpcClient;
         private bool m_rpcRunning;
+        private Audio.AudioOutput m_audioOutput;
 
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        public async void NavigateToPageWithParameter(object parameter)
+        public void NavigateToPageWithParameter(object parameter)
         {
 
         }
 
         private void OnAudioInputHandler(IBuffer buffer)
         {
-            Debug.WriteLine("OnAudioInputHandler: " + buffer.Length);
+            //Debug.WriteLine("OnAudioInputHandler: " + buffer.Length);
+            m_audioOutput.Send(buffer);
         }
 
         private async void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -54,7 +56,6 @@ namespace CustomCapability
                     openButton.Content = "Close";
                     startButton.IsEnabled = true;
                     m_rpcRunning = false;
-
                 }
                 else
                 {
@@ -66,7 +67,6 @@ namespace CustomCapability
                 var result = await m_rpcClient.Close();
                 openButton.Content = "Open";
                 startButton.IsEnabled = false;
-
                 m_rpcClient = null;
             }
         }
@@ -78,14 +78,16 @@ namespace CustomCapability
                 var result = await m_rpcClient.Stop();
                 m_rpcRunning = false;
                 startButton.Content = "Start";
-
+                m_audioOutput.Stop();
+                m_audioOutput = null;
             }
             else
             {
+                m_audioOutput = new Audio.AudioOutput();
+                await m_audioOutput.Start();
                 m_rpcClient.Start();
                 m_rpcRunning = true;
                 startButton.Content = "Stop";
-
             }
         }
     }

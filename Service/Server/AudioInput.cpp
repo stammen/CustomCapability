@@ -139,24 +139,24 @@ void AudioInput::OnQuantumStarted(Windows::Media::Audio::AudioGraph^ graph, Plat
 			auto numFrames = capacity / m_sampleSize / m_channels;
 			audio_data->resize(numFrames * sizeof(short));
 			short* output = (short*)audio_data->data();
-
+			float* input = (float*)data;
 			if (numFrames > 0)
 			{
 				// convert samples from float to short
 				for (unsigned int i = 0; i < numFrames; ++i)
 				{
-					float temp = data[i];
+					float temp = input[i];
 					if (temp >= 1.0)
 					{
 						output[i] = 32767;
 					}
-					else if (temp < 1.0)
+					else if (temp < -1.0)
 					{
 						output[i] = -32768;
 					}
 					else
 					{
-						output[i] = static_cast<short>(temp * 32768.0f);
+						output[i] = temp * 32768.0f;
 					}
 				}
 
