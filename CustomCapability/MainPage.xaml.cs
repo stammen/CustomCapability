@@ -32,6 +32,11 @@ namespace CustomCapability
             this.InitializeComponent();
         }
 
+        public async void NavigateToPageWithParameter(object parameter)
+        {
+
+        }
+
         private void OnAudioInputHandler(IBuffer buffer)
         {
             Debug.WriteLine("OnAudioInputHandler: " + buffer.Length);

@@ -30,6 +30,8 @@ const WCHAR* CustomCapabilityName = L"microsoft.hsaTestCustomCapability_q536wpkp
 bool ShutdownRequested;
 static RPC_BINDING_VECTOR* BindingVector = nullptr;
 
+
+
 void FreeSidArray(__inout_ecount(cSIDs) PSID* pSIDs, ULONG cSIDs)
 {
     if (pSIDs != nullptr)

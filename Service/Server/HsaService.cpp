@@ -14,6 +14,7 @@
 #pragma region Includes
 #include <stdio.h>
 #include <windows.h>
+#include <ppltasks.h>
 #include "ServiceInstaller.h"
 #include "ServiceBase.h"
 #include "SampleService.h"
@@ -41,6 +42,16 @@
 // The password to the service account name
 #define SERVICE_PASSWORD         NULL
 
+#define TEST_PROTOCOL L"customcapability-uwp:"
+
+
+void LaunchUWPApp(Platform::String^ protocol)
+{
+	// Launch the Win32 App
+	auto uri = ref new Windows::Foundation::Uri(protocol); // The protocol handled by the launched app
+	auto options = ref new Windows::System::LauncherOptions();
+	concurrency::task<bool> task(Windows::System::Launcher::LaunchUriAsync(uri, options));
+}
 
 //
 //  FUNCTION: wmain(int, wchar_t *[])
@@ -61,6 +72,8 @@
 int wmain(_In_ int argc, _In_ wchar_t *argv[])
 {
     bool invalidArgs = false;
+
+	//LaunchUWPApp(TEST_PROTOCOL);
 
     if ((argc > 1) && ((*argv[1] == L'-' || (*argv[1] == L'/'))))
     {
@@ -99,6 +112,7 @@ int wmain(_In_ int argc, _In_ wchar_t *argv[])
     {
         invalidArgs = true;
         CSampleService service(SERVICE_NAME);
+
         if (!CServiceBase::Run(service))
         {
             wprintf(L"Service failed to run w/err 0x%08lx\n", GetLastError());
