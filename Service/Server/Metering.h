@@ -21,9 +21,14 @@ namespace RpcServer
 		virtual void OnAudioInput(std::shared_ptr<std::vector<unsigned char>> data);
 
     private:
+
+		void OnAccessChanged(Platform::Object^ sender, Windows::Devices::Enumeration::DeviceAccessChangedEventArgs^ e);
+
 		__int64 m_context;
 		std::unique_ptr<AudioInput> m_audioInput;
         volatile bool stopMeteringRequested = false;
 		Concurrency::concurrent_queue < std::shared_ptr<std::vector<unsigned char>>> m_sampleQueue;
+		Windows::Devices::Enumeration::DeviceAccessInformation^ m_deviceAccessInformation;
+		bool m_bHasMicPermission;
     };
 }

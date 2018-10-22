@@ -30,7 +30,7 @@
     <ProjectGuid>{D61475C4-185E-50F6-8FAD-A0163961B3B3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>RpcServer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
